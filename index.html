@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUMAH YANG TAK DAPAT DIMASUKI</title>
+    <!-- Memuatkan Tailwind CSS untuk penggayaan yang pantas dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        
+        <!-- Tambahan Header Organisasi -->
+        <div class="text-center mb-6 border-b pb-4 border-gray-200">
+            <h1 class="text-lg md:text-xl font-extrabold text-blue-900 tracking-wide uppercase">
+                Jabatan Kesihatan Negeri Kedah
+            </h1>
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">RUMAH YANG TAK DAPAT DIMASUKI</h2>
+
+        <div class="mb-6 p-4 bg-yellow-50 text-yellow-800 text-sm rounded-md border border-yellow-200 flex items-start">
+            <svg class="w-5 h-5 mr-2 flex-shrink-0 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span><strong>Perhatian:</strong> Maklumat ini diperlukan untuk <em>mopping up</em>, jadi perlu berada di rumah/premis tersebut semasa jana lokasi.</span>
+        </div>
+
+        <form id="lokalitiForm" class="space-y-6">
+            
+            <!-- Bahagian Dropdown Lokaliti ACD -->
+            <div>
+                <label for="lokalitiAcd" class="block text-sm font-medium text-gray-700 mb-2">
+                    ACD
+                </label>
+                <select id="lokalitiAcd" name="lokalitiAcd" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm border border-gray-300">
+                    <option value="" disabled selected>Pilih Lokaliti (1-46)</option>
+                    <!-- JavaScript akan mengisi pilihan ini nanti -->
+                </select>
+            </div>
+
+            <div>
+                <label for="statusRumah" class="block text-sm font-medium text-gray-700 mb-2">
+                    Status Rumah
+                </label>
+                <select id="statusRumah" name="statusRumah" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm border border-gray-300">
+                    <option value="" disabled selected>Pilih Status Rumah</option>
+                    <option value="Rumah Kosong">Rumah Kosong</option>
+                    <option value="Rumah Berkunci">Rumah Berkunci</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="adaAnjing" class="block text-sm font-medium text-gray-700 mb-2">
+                    Kehadiran Anjing
+                </label>
+                <select id="adaAnjing" name="adaAnjing" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm border border-gray-300">
+                    <option value="" disabled selected>Pilih (Ada/Tiada)</option>
+                    <option value="Ada">Ada Anjing</option>
+                    <option value="Tiada">Tiada Anjing</option>
+                </select>
+            </div>
+
+            <!-- Bahagian Butang Lokasi dan Paparan Koordinat -->
+            <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Lokasi Semasa (GPS)
+                </label>
+                
+                <div class="flex flex-col space-y-3">
+                    <button type="button" id="btnGetLocation" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Dapatkan Lokasi Saya
+                    </button>
+                    
+                    <div id="locationDisplay" class="hidden text-sm">
+                        <p class="text-gray-600"><span class="font-semibold text-gray-800">Latitud:</span> <span id="latValue"></span></p>
+                        <p class="text-gray-600"><span class="font-semibold text-gray-800">Longitud:</span> <span id="longValue"></span></p>
+                    </div>
+                    
+                    <div id="locationError" class="hidden text-sm text-red-600 p-2 bg-red-50 rounded border border-red-200">
+                        <!-- Mesej ralat akan dipaparkan di sini -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="formError" class="hidden text-sm text-red-600 p-2 bg-red-50 rounded border border-red-200 text-center font-medium">
+                <!-- Mesej ralat borang akan dipaparkan di sini -->
+            </div>
+
+            <div>
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                    Hantar Data
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Mengisi dropdown Lokaliti ACD dengan pilihan 1 hingga 46
+            const selectElement = document.getElementById('lokalitiAcd');
+            for (let i = 1; i <= 46; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Lokaliti ${i}`;
+                selectElement.appendChild(option);
+            }
+
+            // Elemen-elemen DOM berkaitan lokasi
+            const btnGetLocation = document.getElementById('btnGetLocation');
+            const locationDisplay = document.getElementById('locationDisplay');
+            const latValue = document.getElementById('latValue');
+            const longValue = document.getElementById('longValue');
+            const locationError = document.getElementById('locationError');
+            const form = document.getElementById('lokalitiForm');
+
+            // 2. Fungsi untuk mendapatkan lokasi semasa
+            btnGetLocation.addEventListener('click', () => {
+                // Sembunyikan mesej terdahulu
+                locationDisplay.classList.add('hidden');
+                locationError.classList.add('hidden');
+                
+                // Tukar teks butang semasa memuatkan
+                const originalText = btnGetLocation.innerHTML;
+                btnGetLocation.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sedang mendapatkan lokasi...';
+                btnGetLocation.disabled = true;
+
+                // Periksa jika pelayar menyokong Geolocation
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        // Kejayaan mendapatkan lokasi
+                        (position) => {
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
+
+                            latValue.textContent = latitude.toFixed(6); // Papar sehingga 6 titik perpuluhan
+                            longValue.textContent = longitude.toFixed(6);
+
+                            locationDisplay.classList.remove('hidden');
+                            
+                            // Kembalikan keadaan butang
+                            btnGetLocation.innerHTML = originalText;
+                            btnGetLocation.disabled = false;
+                        },
+                        // Gagal mendapatkan lokasi
+                        (error) => {
+                            let errorMessage = 'Gagal mendapatkan lokasi.';
+                            switch(error.code) {
+                                case error.PERMISSION_DENIED:
+                                    errorMessage = "Akses lokasi dinafikan oleh pengguna. Sila benarkan akses lokasi di tetapan peranti anda.";
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    errorMessage = "Maklumat lokasi tidak tersedia pada masa ini.";
+                                    break;
+                                case error.TIMEOUT:
+                                    errorMessage = "Permintaan untuk mendapatkan lokasi telah tamat masa.";
+                                    break;
+                                case error.UNKNOWN_ERROR:
+                                    errorMessage = "Ralat yang tidak diketahui berlaku semasa mencuba mendapatkan lokasi.";
+                                    break;
+                            }
+                            locationError.textContent = errorMessage;
+                            locationError.classList.remove('hidden');
+                            
+                            // Kembalikan keadaan butang
+                            btnGetLocation.innerHTML = originalText;
+                            btnGetLocation.disabled = false;
+                        },
+                        // Pilihan Geolocation: Boleh dilaraskan mengikut keperluan ketepatan dan bateri
+                        {
+                            enableHighAccuracy: true, // Guna GPS jika ada (baik untuk telefon)
+                            timeout: 10000,           // Masa menunggu maksimum 10 saat
+                            maximumAge: 0             // Jangan guna lokasi yang telah di-cache
+                        }
+                    );
+                } else {
+                    // Pelayar tidak menyokong Geolocation
+                    locationError.textContent = "Geolokasi tidak disokong oleh pelayar web (browser) ini.";
+                    locationError.classList.remove('hidden');
+                    btnGetLocation.innerHTML = originalText;
+                    btnGetLocation.disabled = false;
+                }
+            });
+
+            // 3. Mengendalikan penghantaran borang (Mock up)
+            const formError = document.getElementById('formError');
+
+            // SILA MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbzEKlZOdFeJL_hbyJdDSXzvkmko1ymoiiZ-pjAUMRuWfeBnw-N1HGnztwyTeLWE8MZg/exec';
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // Elak halaman di-refresh
+
+                formError.classList.add('hidden'); // Sembunyikan ralat lama
+
+                const selectedLokaliti = selectElement.value;
+                const statusRumahValue = document.getElementById('statusRumah').value;
+                const adaAnjingValue = document.getElementById('adaAnjing').value;
+                const lat = latValue.textContent;
+                const lng = longValue.textContent;
+
+                if (!selectedLokaliti || !statusRumahValue || !adaAnjingValue) {
+                    formError.textContent = 'Sila lengkapkan semua pilihan (ACD, Status Rumah, dan Kehadiran Anjing).';
+                    formError.classList.remove('hidden');
+                    return;
+                }
+
+                if (!lat || !lng) {
+                     // Kita benarkan submit tanpa lokasi jika mahu, 
+                     // atau ubah logik ini untuk mewajibkan lokasi.
+                     console.warn('Amaran: Data dihantar tanpa koordinat lokasi.');
+                }
+
+                // Tukar butang hantar untuk menunjukkan status sedang menghantar
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const oriBtnText = submitBtn.textContent;
+                submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sedang Dihantar...';
+                submitBtn.disabled = true;
+
+                // Sediakan data untuk dihantar ke Google Sheets
+                const formData = new FormData();
+                formData.append('lokaliti', selectedLokaliti);
+                formData.append('statusRumah', statusRumahValue);
+                formData.append('adaAnjing', adaAnjingValue);
+                formData.append('latitude', lat || 'Tiada');
+                formData.append('longitude', lng || 'Tiada');
+
+                if (scriptURL === 'MASUKKAN_URL_WEB_APP_GOOGLE_SCRIPT_ANDA_DI_SINI') {
+                    alert('PERHATIAN: Anda belum meletakkan URL Google Apps Script. Sila ikut arahan di chat untuk setup Google Sheets.');
+                    submitBtn.textContent = oriBtnText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                // Hantar data menggunakan Fetch API
+                fetch(scriptURL, { method: 'POST', body: formData })
+                    .then(response => {
+                        submitBtn.textContent = 'Berjaya Dihantar!';
+                        submitBtn.classList.replace('bg-green-600', 'bg-blue-600');
+                        submitBtn.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
+
+                        setTimeout(() => {
+                            submitBtn.textContent = oriBtnText;
+                            submitBtn.classList.replace('bg-blue-600', 'bg-green-600');
+                            submitBtn.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+                            submitBtn.disabled = false;
+                            form.reset(); // Reset form
+                            locationDisplay.classList.add('hidden'); // Sembunyikan semula paparan lokasi
+                            latValue.textContent = '';
+                            longValue.textContent = '';
+                        }, 3000);
+                    })
+                    .catch(error => {
+                        console.error('Ralat!', error.message);
+                        formError.textContent = 'Gagal menghantar data. Sila cuba lagi.';
+                        formError.classList.remove('hidden');
+                        submitBtn.textContent = oriBtnText;
+                        submitBtn.disabled = false;
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
